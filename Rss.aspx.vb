@@ -670,7 +670,7 @@ Namespace Ventrian.NewsArticles
 
             ctrl.RenderControl(hw)
 
-            Return sb.ToString()
+            Return sb.ToString().Replace("&nbsp;", " ")
 
         End Function
 
