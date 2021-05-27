@@ -481,7 +481,10 @@ Namespace Ventrian.NewsArticles
 
                             Dim objLiteral As New Literal
                             objLiteral.ID = Globals.CreateValidID("Rss-" & objArticle.ArticleID.ToString() & iPtr.ToString())
-                            objLiteral.Text = description
+
+                            ' objLiteral.Text = HtmlToPlainText(description)
+                            'objLiteral.Text = WebUtility.HtmlEncode("<![CDATA[" + description + "]]>")
+                            objLiteral.Text = WebUtility.HtmlEncode(description)
                             objPlaceHolder.Add(objLiteral)
 
                         Case "DETAILS"
@@ -670,7 +673,11 @@ Namespace Ventrian.NewsArticles
 
             ctrl.RenderControl(hw)
 
-            Return sb.ToString().Replace("&nbsp;", " ")
+            Return sb.ToString()
+            'Return sb.ToString().Replace("&nbsp;", " ")
+            'Dim rst As String = sb.ToString()
+            'Dim rst2 As String = HtmlToPlainText(rst)
+            'Return rst
 
         End Function
 
@@ -680,6 +687,32 @@ Namespace Ventrian.NewsArticles
             Return Regex.Replace(html, pattern, String.Empty)
 
         End Function
+
+        'Private Shared Function HtmlToPlainText(ByVal html As String) As String
+        '    Const tagWhiteSpace As String = "(>|$)(\W|\n|\r)+<"
+        '    'matches one or more (white space or line breaks) between '>' and '<'
+        '    Const stripFormatting As String = "<[^>]*(>|$)"
+        '    'match any character between '<' and '>', even when end tag is missing
+        '    Const lineBreak As String = "<(br|BR)\s{0,1}\/{0,1}>"
+        '    'matches: <br>,<br/>,<br />,<BR>,<BR/>,<BR />
+        '    Dim lineBreakRegex = New Regex(lineBreak, RegexOptions.Multiline)
+        '    Dim stripFormattingRegex = New Regex(stripFormatting, RegexOptions.Multiline)
+        '    Dim tagWhiteSpaceRegex = New Regex(tagWhiteSpace, RegexOptions.Multiline)
+        '    Dim text = html
+        '    'Decode html specific characters
+        '    text = System.Net.WebUtility.HtmlDecode(text)
+        '    'Remove tag whitespace/line breaks
+        '    text = tagWhiteSpaceRegex.Replace(text, "><")
+        '    'Replace <br /> with line breaks
+        '    text = lineBreakRegex.Replace(text, Environment.NewLine)
+        '    'Strip formatting
+        '    text = stripFormattingRegex.Replace(text, String.Empty)
+        '    Return text
+        'End Function
+
+
+
+
 
 #End Region
 
@@ -864,8 +897,8 @@ Namespace Ventrian.NewsArticles
                 Next
 
                 ProcessHeaderFooter(phRSS.Controls, layoutFooter.Tokens)
-
-                Response.Write(RenderControlToString(phRSS))
+                Dim rst As String = RenderControlToString(phRSS)
+                Response.Write(rst)
 
             End If
 
